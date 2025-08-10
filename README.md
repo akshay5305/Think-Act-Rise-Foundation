@@ -225,12 +225,6 @@ Edit `case_types.json` to customize available case types:
 - [ ] **Notifications**: Email alerts for case updates
 - [ ] **Bulk Search**: CSV upload for multiple case queries
 
-### Optional Extras (In Progress)
-- [ ] **Docker Support**: Containerized deployment
-- [ ] **Unit Tests**: Comprehensive test coverage
-- [ ] **CI/CD Pipeline**: GitHub Actions workflow
-- [ ] **Order Pagination**: Handle cases with many orders
-
 ---
 
 ## 📦 Dependencies
@@ -285,18 +279,7 @@ This tool is designed for educational and research purposes. Users are responsib
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/court-data-fetcher/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/court-data-fetcher/discussions)
-- **Email**: your.email@example.com
-
----
-
-## 📈 Project Stats
-
-![GitHub stars](https://img.shields.io/github/stars/yourusername/court-data-fetcher?style=social)
-![GitHub forks](https://img.shields.io/github/forks/yourusername/court-data-fetcher?style=social)
-![GitHub issues](https://img.shields.io/github/issues/yourusername/court-data-fetcher)
-![GitHub license](https://img.shields.io/github/license/yourusername/court-data-fetcher)
+- **Email**: akshaygarur5305@gmail.com
 
 ---
 
