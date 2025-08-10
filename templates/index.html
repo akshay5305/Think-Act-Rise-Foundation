@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delhi High Court Case Status</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Delhi High Court Case Status</h1>
+        
+        <form id="caseForm">
+            <div class="form-group">
+                <label for="case_type">Case Type:</label>
+                <select name="case_type" id="case_type" required>
+                    <option value="">Select Case Type</option>
+                    {% for case_type in case_types %}
+                    <option value="{{ case_type }}">{{ case_type }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="case_number">Case Number:</label>
+                <input type="text" name="case_number" id="case_number" required placeholder="Enter case number">
+            </div>
+            
+            <div class="form-group">
+                <label for="case_year">Case Year:</label>
+                <select name="case_year" id="case_year" required>
+                    <option value="">Select Year</option>
+                    {% for year in years %}
+                    <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">Search Case</button>
+        </form>
+        
+        <div id="message" class="message"></div>
+        
+        <!-- Orders Results Section -->
+        <div id="ordersSection" style="display: none;">
+            <h2 style="color: #333; margin-top: 30px; margin-bottom: 20px;">📋 Case Orders</h2>
+            <div id="ordersList"></div>
+        </div>
+    </div>
+
+    <style>
+        .orders-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .order-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .order-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .order-date {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .order-name {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .order-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: transform 0.2s;
+        }
+        
+        .order-link:hover {
+            transform: scale(1.05);
+            text-decoration: none;
+            color: white;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        document.getElementById('caseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const messageDiv = document.getElementById('message');
+            const ordersSection = document.getElementById('ordersSection');
+            
+            // Hide previous results
+            ordersSection.style.display = 'none';
+            messageDiv.style.display = 'none';
+            
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="loading-spinner"></div>Searching...';
+            
+            // Get form data
+            const formData = new FormData(this);
+            
+            // Send to Flask
+            fetch('/search', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                messageDiv.style.display = 'block';
+                
+                if (data.status === 'success' && data.orders) {
+                    // Show success message
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = data.message;
+                    
+                    // Display orders
+                    displayOrders(data.orders);
+                    
+                } else if (data.status === 'no_data') {
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = data.message;
+                    
+                } else if (data.status === 'no_orders') {
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = data.message;
+                    
+                } else {
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = data.message;
+                }
+                
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Search Case';
+            })
+            .catch(error => {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Error occurred: ' + error.message;
+                
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Search Case';
+            });
+        });
+        
+        function displayOrders(orders) {
+            const ordersSection = document.getElementById('ordersSection');
+            const ordersList = document.getElementById('ordersList');
+            
+            // Create orders HTML
+            let ordersHTML = '<div class="orders-container">';
+            
+            orders.forEach((order, index) => {
+                ordersHTML += `
+                    <div class="order-item">
+                        <div class="order-date">📅 ${order.date}</div>
+                        <div class="order-name">${order.name}</div>
+                        <a href="${order.link}" target="_blank" class="order-link">
+                            📄 View Order PDF
+                        </a>
+                    </div>
+                `;
+            });
+            
+            ordersHTML += '</div>';
+            
+            ordersList.innerHTML = ordersHTML;
+            ordersSection.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
